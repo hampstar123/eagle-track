@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eagle Track</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #2a2723; font-family: 'Inter', sans-serif; color: #e7e5e4; min-height: 100vh; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input { font-family: inherit; }
+.display { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
+.container { max-width: 56rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+/* AUTH SCREEN */
+.auth-screen { max-width: 28rem; margin: 4rem auto; padding: 0 1.5rem; }
+.auth-card { background: #3a3631; padding: 2rem; }
+.auth-title { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: #fafaf9; line-height: 1; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+.auth-subtitle { color: #a8a29e; font-size: 0.875rem; margin-bottom: 2rem; font-style: italic; }
+.auth-tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid #57534e; margin-bottom: 1.5rem; }
+.auth-tab { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; padding: 0.625rem 1rem; border-bottom: 2px solid transparent; margin-bottom: -1px; color: #78716c; }
+.auth-tab.active { border-bottom-color: #fafaf9; color: #fafaf9; }
+.auth-tab:hover { color: #d6d3d1; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.15em; color: #a8a29e; margin-bottom: 0.375rem; }
+.field input { width: 100%; padding: 0.625rem 0.75rem; background: #1c1917; border: 1px solid #57534e; color: #fafaf9; font-size: 0.9375rem; }
+.field input:focus { outline: none; border-color: #60a5fa; }
+.field-helper { font-size: 0.75rem; color: #78716c; margin-top: 0.25rem; }
+.auth-btn { width: 100%; padding: 0.75rem; background: #2563eb; color: #ffffff; font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; margin-top: 0.5rem; transition: background 0.15s; }
+.auth-btn:hover { background: #1d4ed8; }
+.auth-btn:disabled { background: #57534e; cursor: not-allowed; }
+.auth-error { background: #7f1d1d; color: #fecaca; padding: 0.625rem 0.875rem; margin-bottom: 1rem; font-size: 0.875rem; border-left: 3px solid #ef4444; }
+.auth-info { background: #1e3a5f; color: #bfdbfe; padding: 0.625rem 0.875rem; margin-bottom: 1rem; font-size: 0.875rem; border-left: 3px solid #60a5fa; }
+.auth-link { color: #93c5fd; text-decoration: underline; cursor: pointer; font-size: 0.875rem; }
+.auth-link:hover { color: #60a5fa; }
+.auth-divider { text-align: center; margin: 1.5rem 0 1rem; font-size: 0.75rem; color: #78716c; letter-spacing: 0.1em; font-family: 'Bebas Neue', sans-serif; }
+.auth-secondary { display: block; width: 100%; padding: 0.625rem; border: 1px solid #57534e; color: #d6d3d1; font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; text-align: center; transition: all 0.15s; }
+.auth-secondary:hover { background: #1c1917; border-color: #78716c; }
+
+/* APP HEADER */
+header { border-bottom: 2px solid #fafaf9; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+.header-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+.stats-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; color: #a8a29e; margin-bottom: 0.5rem; }
+h1.title { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: #fafaf9; line-height: 1; letter-spacing: 0.04em; font-weight: 400; }
+@media (min-width: 768px) { h1.title { font-size: 5.5rem; } }
+.subtitle { font-size: 0.875rem; color: #a8a29e; margin-top: 0.5rem; font-style: italic; }
+.user-menu { text-align: right; }
+.user-greeting { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; color: #fafaf9; margin-bottom: 0.5rem; }
+.user-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; }
+.user-btn { padding: 0.375rem 0.75rem; border: 1px solid #57534e; color: #d6d3d1; font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; transition: all 0.15s; }
+.user-btn:hover { background: #1c1917; border-color: #78716c; }
+.user-btn.share { border-color: #60a5fa; color: #93c5fd; }
+.user-btn.share:hover { background: #1e3a5f; }
+
+/* PARENT BANNER */
+.parent-banner { background: #1e3a5f; border-left: 6px solid #60a5fa; padding: 0.875rem 1.25rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+.parent-banner-text { font-size: 0.875rem; color: #bfdbfe; }
+.parent-banner-text strong { color: #fafaf9; font-weight: 600; }
+.parent-banner-btn { padding: 0.375rem 0.75rem; border: 1px solid #93c5fd; color: #93c5fd; font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; }
+.parent-banner-btn:hover { background: rgba(255,255,255,0.05); }
+
+/* SYNC INDICATOR */
+.sync-status { font-size: 0.6875rem; color: #78716c; letter-spacing: 0.05em; font-family: 'Bebas Neue', sans-serif; margin-top: 0.5rem; }
+.sync-status.syncing { color: #fbbf24; }
+.sync-status.error { color: #f87171; }
+.sync-status.synced { color: #4ade80; }
+
+/* OVERALL PROGRESS */
+.overall-progress { background: #3a3631; border-left: 6px solid #60a5fa; padding: 1.25rem 1.5rem; margin-bottom: 2rem; }
+.progress-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem; }
+.progress-label { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; color: #fafaf9; }
+.progress-pct { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.05em; color: #93c5fd; }
+.progress-track { height: 6px; background: #1c1917; position: relative; overflow: hidden; margin-bottom: 0.5rem; }
+.progress-fill { position: absolute; top: 0; bottom: 0; left: 0; background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%); transition: width 0.4s; }
+.progress-detail { font-size: 0.75rem; color: #a8a29e; letter-spacing: 0.05em; }
+
+/* TABS */
+.tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid #57534e; margin-bottom: 2rem; flex-wrap: wrap; }
+.tab { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; padding: 0.75rem 1.25rem; border-bottom: 2px solid transparent; margin-bottom: -1px; color: #78716c; transition: all 0.15s; }
+.tab:hover { color: #d6d3d1; }
+.tab.active { border-bottom-color: #fafaf9; color: #fafaf9; }
+
+/* CARDS */
+.req-card { background: #3a3631; margin-bottom: 0.75rem; transition: all 0.2s; }
+.req-card.done { opacity: 0.55; }
+.req-card.signed { background: #1e3a5f; box-shadow: 0 0 0 2px #60a5fa inset; }
+.req-card.signed.done { opacity: 1; }
+.req-card.done.signed .req-text { color: #cbd5e1; text-decoration: line-through; }
+.signed-stamp { font-family: 'Bebas Neue', sans-serif; font-size: 0.6875rem; letter-spacing: 0.1em; color: #93c5fd; padding: 0.125rem 0.5rem; border: 1px solid #60a5fa; background: rgba(0,0,0,0.25); display: inline-block; }
+.req-inner { padding: 1rem 1.25rem; display: flex; gap: 1rem; align-items: flex-start; }
+.toggle-stack { display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0; align-items: flex-start; }
+.toggle-row { display: flex; align-items: center; gap: 0.5rem; }
+.toggle-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.6875rem; letter-spacing: 0.1em; color: #a8a29e; width: 4.5rem; }
+.toggle { flex-shrink: 0; position: relative; width: 2.75rem; height: 1.5rem; border-radius: 999px; background: #16a34a; transition: background 0.2s; margin-top: 0.125rem; }
+.toggle.on { background: #2563eb; }
+.toggle-knob { position: absolute; top: 0.125rem; left: 0.125rem; width: 1.25rem; height: 1.25rem; background: #fafaf9; border-radius: 999px; box-shadow: 0 1px 3px rgba(0,0,0,0.4); transition: left 0.2s; }
+.toggle.on .toggle-knob { left: calc(100% - 1.375rem); }
+.toggle-signed { background: #57534e; }
+.toggle-signed.on { background: #2563eb; }
+.toggle:disabled, .toggle.readonly { opacity: 0.5; cursor: not-allowed; }
+.req-body { flex: 1; }
+.req-tag-row { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.375rem; flex-wrap: wrap; }
+.req-id { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; color: #fafaf9; padding: 0.125rem 0.5rem; border: 1px solid #57534e; background: #1c1917; }
+.req-rank-tag, .req-cat-tag { font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; padding: 0.125rem 0.5rem; color: #1c1917; font-weight: 600; }
+.req-text { font-size: 0.9375rem; line-height: 1.55; color: #e7e5e4; }
+.req-card.done .req-text { text-decoration: line-through; color: #a8a29e; }
+.req-sublist { margin-top: 0.5rem; margin-left: 1rem; font-size: 0.875rem; color: #d6d3d1; line-height: 1.6; list-style-position: inside; }
+.req-sublist li { margin-bottom: 0.125rem; }
+
+/* CATEGORY/RANK BLOCKS */
+.cat-block { background: #3a3631; border-left: 6px solid; margin-bottom: 1rem; }
+.cat-header { padding: 0.875rem 1.25rem; border-bottom: 1px solid #57534e; display: flex; justify-content: space-between; align-items: baseline; }
+.cat-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.125rem; letter-spacing: 0.08em; }
+.cat-progress { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.05em; color: #a8a29e; }
+.cat-block .req-card { border-bottom: 1px solid #57534e; margin: 0; background: transparent; }
+.cat-block .req-card.signed { background: #1e3a5f; }
+.cat-block .req-card:last-child { border-bottom: none; }
+.rank-block { background: #3a3631; border-left: 6px solid; margin-bottom: 1.5rem; }
+.rank-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #57534e; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+.rank-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; letter-spacing: 0.04em; color: #fafaf9; }
+.rank-progress-text { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; color: #a8a29e; }
+.rank-cat-section { padding: 0.75rem 1.5rem 0.25rem; border-bottom: 1px solid #57534e; }
+.rank-cat-section:last-child { border-bottom: none; }
+.rank-cat-label { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.15em; color: #a8a29e; margin: 0.5rem 0; padding-bottom: 0.25rem; }
+.rank-block .req-card { background: #2a2723; margin-bottom: 0.5rem; }
+.rank-block .req-card.signed { background: #1e3a5f; }
+
+/* MERIT BADGES */
+.mb-grid { display: grid; grid-template-columns: 1fr; gap: 0.75rem; }
+@media (min-width: 640px) { .mb-grid { grid-template-columns: 1fr 1fr; } }
+.mb-card { background: #3a3631; border-left: 6px solid #60a5fa; padding: 1rem 1.25rem; display: flex; gap: 1rem; align-items: flex-start; transition: all 0.2s; }
+.mb-card.done { opacity: 0.55; }
+.mb-card.signed { background: #1e3a5f; box-shadow: 0 0 0 2px #60a5fa inset; }
+.mb-card.signed.done { opacity: 1; }
+.mb-card.done .mb-name { text-decoration: line-through; color: #a8a29e; }
+.mb-card.signed.done .mb-name { color: #cbd5e1; }
+.mb-card.choice { border-left-color: #a78bfa; }
+.mb-info { flex: 1; }
+.mb-name { font-size: 1rem; font-weight: 600; color: #fafaf9; margin-bottom: 0.125rem; }
+.mb-tag { font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; color: #a8a29e; }
+.mb-group-label { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; color: #fafaf9; margin: 1.5rem 0 0.75rem; padding-bottom: 0.25rem; border-bottom: 1px solid #57534e; }
+.mb-group-label:first-child { margin-top: 0; }
+.mb-helper { font-size: 0.8125rem; color: #a8a29e; margin-bottom: 1rem; font-style: italic; line-height: 1.5; }
+
+/* MODAL */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+.modal { background: #3a3631; max-width: 28rem; width: 100%; padding: 2rem; }
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.04em; color: #fafaf9; margin-bottom: 0.5rem; }
+.modal-text { font-size: 0.875rem; color: #d6d3d1; margin-bottom: 1.25rem; line-height: 1.5; }
+.share-code-display { background: #1c1917; padding: 1.25rem; text-align: center; margin: 1rem 0; }
+.share-code-value { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; letter-spacing: 0.4em; color: #93c5fd; font-weight: 600; }
+.modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: wrap; margin-top: 1rem; }
+.modal-btn { padding: 0.5rem 1rem; border: 1px solid #57534e; color: #d6d3d1; font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; }
+.modal-btn:hover { background: #1c1917; }
+.modal-btn.primary { background: #2563eb; border-color: #2563eb; color: #ffffff; }
+.modal-btn.primary:hover { background: #1d4ed8; }
+
+/* FOOTER */
+.footer-actions { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid #57534e; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+footer { font-family: 'Bebas Neue', sans-serif; font-size: 0.75rem; letter-spacing: 0.1em; color: #78716c; }
+
+/* LOADING SPINNER */
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #57534e; border-top-color: #93c5fd; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.full-spinner { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 1rem; }
+.full-spinner .spinner { width: 32px; height: 32px; border-width: 3px; }
+.full-spinner-text { font-family: 'Bebas Neue', sans-serif; font-size: 0.875rem; letter-spacing: 0.1em; color: #a8a29e; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen" class="full-spinner">
+  <div class="spinner"></div>
+  <div class="full-spinner-text">LOADING...</div>
+</div>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen" class="auth-screen hidden">
+  <div class="auth-card">
+    <div class="auth-title">EAGLE TRACK</div>
+    <div class="auth-subtitle">Scouts BSA rank requirements tracker</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-mode="login">LOG IN</button>
+      <button class="auth-tab" data-mode="signup">SIGN UP</button>
+    </div>
+
+    <div id="auth-error" class="auth-error hidden"></div>
+    <div id="auth-info" class="auth-info hidden"></div>
+
+    <!-- LOGIN FORM -->
+    <form id="login-form">
+      <div class="field">
+        <label>EMAIL</label>
+        <input type="email" id="login-email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label>PASSWORD</label>
+        <input type="password" id="login-password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="auth-btn" id="login-btn">LOG IN</button>
+    </form>
+
+    <!-- SIGNUP FORM -->
+    <form id="signup-form" class="hidden">
+      <div class="field">
+        <label>DISPLAY NAME</label>
+        <input type="text" id="signup-name" autocomplete="name" required maxlength="50">
+        <div class="field-helper">Shown on your dashboard. e.g. "Sam K."</div>
+      </div>
+      <div class="field">
+        <label>EMAIL</label>
+        <input type="email" id="signup-email" autocomplete="email" required>
+        <div class="field-helper">For minors, use a parent's email.</div>
+      </div>
+      <div class="field">
+        <label>PASSWORD</label>
+        <input type="password" id="signup-password" autocomplete="new-password" required minlength="8">
+        <div class="field-helper">At least 8 characters. Use something unique to this app.</div>
+      </div>
+      <button type="submit" class="auth-btn" id="signup-btn">CREATE ACCOUNT</button>
+    </form>
+
+    <div class="auth-divider">OR</div>
+    <button type="button" id="parent-mode-btn" class="auth-secondary">PARENT VIEW (USING SHARE CODE)</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="container hidden">
+  <header>
+    <div class="header-top">
+      <div>
+        <div class="stats-label" id="header-stats">TRACKING THE TRAIL TO EAGLE</div>
+        <h1 class="title">EAGLE TRACK</h1>
+        <div class="subtitle" id="subtitle">Scouts BSA rank requirements + Eagle-required merit badges</div>
+      </div>
+      <div class="user-menu" id="user-menu">
+        <div class="user-greeting" id="user-greeting"></div>
+        <div class="user-actions">
+          <button class="user-btn share" id="share-btn">SHARE CODE</button>
+          <button class="user-btn" id="changepw-btn">CHANGE PASSWORD</button>
+          <button class="user-btn" id="logout-btn">LOG OUT</button>
+        </div>
+        <div class="sync-status" id="sync-status"></div>
+      </div>
+    </div>
+  </header>
+
+  <div id="parent-banner" class="parent-banner hidden">
+    <div class="parent-banner-text">
+      Viewing <strong id="parent-banner-name"></strong>'s progress in read-only mode.
+    </div>
+    <button class="parent-banner-btn" id="exit-parent-btn">EXIT PARENT VIEW</button>
+  </div>
+
+  <div class="overall-progress">
+    <div class="progress-row">
+      <div class="progress-label">OVERALL PROGRESS &middot; SIGNED OFF</div>
+      <div class="progress-pct"><span id="overall-pct">0</span>%</div>
+    </div>
+    <div class="progress-track">
+      <div id="overall-fill" class="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="progress-detail">
+      <span id="overall-detail">0 of 0 signed off</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="category">BY CATEGORY</button>
+    <button class="tab" data-tab="rank">BY RANK</button>
+    <button class="tab" data-tab="merit">MERIT BADGES</button>
+  </div>
+
+  <div id="tab-category"></div>
+  <div id="tab-rank" class="hidden"></div>
+  <div id="tab-merit" class="hidden"></div>
+
+  <div class="footer-actions">
+    <footer>EAGLE TRACK &middot; V2.0</footer>
+  </div>
+</div>
+
+<!-- MODALS will be injected here -->
+<div id="modal-root"></div>
+
+<script>
+'use strict';
+
+// ============================================================
+// CONFIG — Backend URL
+// ============================================================
+var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbydQ7o6wYUhfHCXtdKn1fzotYUFtSpv_OscYOCYIjbDrMvbHnS98jrFwoqmDluJACo8/exec';
+
+// ============================================================
+// DATA (rank requirements + merit badges)
+// ============================================================
+var CATEGORY_COLORS = {
+  'Scout Basics': '#fb923c',
+  'Camping & Outdoor Ethics': '#84cc16',
+  'Cooking': '#f59e0b',
+  'Tools': '#fbbf24',
+  'First Aid & Emergency Preparedness': '#f43f5e',
+  'Nature': '#4ade80',
+  'Hiking': '#22c55e',
+  'Navigation': '#60a5fa',
+  'Aquatics': '#38bdf8',
+  'Fitness': '#a78bfa',
+  'Citizenship': '#818cf8',
+  'Personal Safety Awareness': '#fb7185',
+  'Leadership': '#c084fc',
+  'Service': '#2dd4bf',
+  'Scout Spirit': '#e879f9',
+  'Conference & Review': '#a8a29e',
+  'Active Membership': '#fcd34d',
+  'Eagle Service Project': '#facc15'
+};
+
+var RANK_COLORS = {
+  'Scout': '#d6d3d1',
+  'Tenderfoot': '#a3e635',
+  'Second Class': '#facc15',
+  'First Class': '#fb923c',
+  'Star': '#f87171',
+  'Life': '#a78bfa',
+  'Eagle': '#fbbf24'
+};
+
+var REQUIREMENTS = [
+  {id:'scout-1a',rank:'Scout',ref:'1a',category:'Scout Basics',text:'Repeat from memory the Scout Oath, Scout Law, Scout motto, and Scout slogan. In your own words, explain their meaning.'},
+  {id:'scout-1b',rank:'Scout',ref:'1b',category:'Scout Spirit',text:'Explain what Scout spirit is. Describe some ways you have shown Scout spirit by practicing the Scout Oath, Scout Law, Scout motto, and Scout slogan.'},
+  {id:'scout-1c',rank:'Scout',ref:'1c',category:'Scout Basics',text:'Demonstrate the Scout sign, salute, and handshake. Explain when they should be used.'},
+  {id:'scout-1d',rank:'Scout',ref:'1d',category:'Scout Basics',text:'Describe the First Class Scout badge and tell what each part stands for. Explain the significance of the First Class Scout badge.'},
+  {id:'scout-1e',rank:'Scout',ref:'1e',category:'Camping & Outdoor Ethics',text:'Repeat from memory the Outdoor Code. List the seven principles of Leave No Trace. Explain the difference between the two.'},
+  {id:'scout-1f',rank:'Scout',ref:'1f',category:'Citizenship',text:'Repeat from memory the Pledge of Allegiance. In your own words, explain its meaning.'},
+  {id:'scout-2a',rank:'Scout',ref:'2a',category:'Leadership',text:'After attending at least one Scout troop meeting, describe how the Scouts in the troop provide its leadership.'},
+  {id:'scout-2b',rank:'Scout',ref:'2b',category:'Scout Basics',text:'Describe the four steps of Scout advancement.'},
+  {id:'scout-2c',rank:'Scout',ref:'2c',category:'Scout Basics',text:'Describe what the Scouts BSA ranks are and how they are earned.'},
+  {id:'scout-2d',rank:'Scout',ref:'2d',category:'Scout Basics',text:'Describe what merit badges are and how they are earned.'},
+  {id:'scout-3a',rank:'Scout',ref:'3a',category:'Leadership',text:'Explain the patrol method. Describe the types of patrols that are used in your troop.'},
+  {id:'scout-3b',rank:'Scout',ref:'3b',category:'Leadership',text:'Become familiar with your patrol name, emblem, flag, and yell. Explain how these items create patrol spirit.'},
+  {id:'scout-4a',rank:'Scout',ref:'4a',category:'Tools',text:'Show how to tie a square knot, two half-hitches, and a taut-line hitch. Explain how each knot is used.'},
+  {id:'scout-4b',rank:'Scout',ref:'4b',category:'Tools',text:'Show the proper care of a rope by learning how to whip and fuse the ends of different kinds of rope.'},
+  {id:'scout-5',rank:'Scout',ref:'5',category:'Tools',text:'Tell what you need to know about using a pocketknife safely and responsibly.'},
+  {id:'scout-6a',rank:'Scout',ref:'6a',category:'Personal Safety Awareness',text:'With your parent or guardian, complete the exercises in the pamphlet How to Protect Your Children from Child Abuse: A Parent\u2019s Guide.'},
+  {id:'scout-6b',rank:'Scout',ref:'6b',category:'Personal Safety Awareness',text:'With your parent or guardian\u2019s permission, view the Personal Safety Awareness videos.'},
+  {id:'scout-7',rank:'Scout',ref:'7',category:'Conference & Review',text:'Since joining the troop and while working on the Scout rank, participate in a Scoutmaster conference.'},
+  {id:'tf-1a',rank:'Tenderfoot',ref:'1a',category:'Camping & Outdoor Ethics',text:'Present yourself to your leader, prepared for an overnight camping trip. Show the personal and camping gear you will use. Show the right way to pack and carry it.'},
+  {id:'tf-1b',rank:'Tenderfoot',ref:'1b',category:'Camping & Outdoor Ethics',text:'Spend at least one night on a patrol or troop campout. Sleep in a tent you have helped pitch.'},
+  {id:'tf-1c',rank:'Tenderfoot',ref:'1c',category:'Camping & Outdoor Ethics',text:'Explain how you demonstrated the Outdoor Code and Leave No Trace on campouts or outings.'},
+  {id:'tf-2a',rank:'Tenderfoot',ref:'2a',category:'Cooking',text:'On the campout, assist in preparing one of the meals. Tell why it is important for each patrol member to share in meal preparation and cleanup.'},
+  {id:'tf-2b',rank:'Tenderfoot',ref:'2b',category:'Cooking',text:'While on a campout, demonstrate the appropriate method of safely cleaning items used to prepare, serve, and eat a meal.'},
+  {id:'tf-2c',rank:'Tenderfoot',ref:'2c',category:'Cooking',text:'Explain the importance of eating together as a patrol.'},
+  {id:'tf-3a',rank:'Tenderfoot',ref:'3a',category:'Tools',text:'Demonstrate a practical use of the square knot.'},
+  {id:'tf-3b',rank:'Tenderfoot',ref:'3b',category:'Tools',text:'Demonstrate a practical use of two half-hitches.'},
+  {id:'tf-3c',rank:'Tenderfoot',ref:'3c',category:'Tools',text:'Demonstrate a practical use of the taut-line hitch.'},
+  {id:'tf-3d',rank:'Tenderfoot',ref:'3d',category:'Tools',text:'Demonstrate proper care, sharpening, and use of the knife, saw, and ax. Describe when each should be used.'},
+  {id:'tf-4a',rank:'Tenderfoot',ref:'4a',category:'First Aid & Emergency Preparedness',text:'Show first aid for the following:',sublist:['Simple cuts and scrapes','Blisters on the hand and foot','Minor (thermal/heat) burns or scalds (superficial, or first-degree)','Bites or stings of insects and ticks','Venomous snakebite','Nosebleed','Frostbite and sunburn','Choking']},
+  {id:'tf-4b',rank:'Tenderfoot',ref:'4b',category:'First Aid & Emergency Preparedness',text:'Describe common poisonous or hazardous plants; identify any that grow in your local area or campsite location. Tell how to treat for exposure to them.'},
+  {id:'tf-4c',rank:'Tenderfoot',ref:'4c',category:'First Aid & Emergency Preparedness',text:'Tell what you can do while on a campout or other outdoor activity to prevent or reduce the occurrence of injuries or exposure listed in Tenderfoot requirements 4a and 4b.'},
+  {id:'tf-4d',rank:'Tenderfoot',ref:'4d',category:'First Aid & Emergency Preparedness',text:'Assemble a personal first-aid kit to carry with you on future campouts and hikes. Tell how each item in the kit would be used.'},
+  {id:'tf-5a',rank:'Tenderfoot',ref:'5a',category:'Hiking',text:'Explain the importance of the buddy system as it relates to your personal safety on outings and where you live. Use the buddy system while on a troop or patrol outing.'},
+  {id:'tf-5b',rank:'Tenderfoot',ref:'5b',category:'Hiking',text:'Describe what to do if you become lost on a hike or campout.'},
+  {id:'tf-5c',rank:'Tenderfoot',ref:'5c',category:'Hiking',text:'Explain the rules of safe and responsible hiking, both on the highway and cross-country, during the day and at night.'},
+  {id:'tf-5d',rank:'Tenderfoot',ref:'5d',category:'Hiking',text:'Explain why it is important to hike on trails or other durable surfaces, and give examples of durable surfaces you saw on your outing.'},
+  {id:'tf-6a',rank:'Tenderfoot',ref:'6a',category:'Fitness',text:'Record your best in the following tests: pushups (60 sec), situps or curl-ups (60 sec), back-saver sit-and-reach (distance), 1-mile walk/run (time).'},
+  {id:'tf-6b',rank:'Tenderfoot',ref:'6b',category:'Fitness',text:'Develop and describe a plan for improvement in each of the activities listed in Tenderfoot requirement 6a. Keep track of your activity for at least 30 days.'},
+  {id:'tf-6c',rank:'Tenderfoot',ref:'6c',category:'Fitness',text:'Show improvement (of any degree) in each activity listed in Tenderfoot requirement 6a after practicing for 30 days.'},
+  {id:'tf-7a',rank:'Tenderfoot',ref:'7a',category:'Citizenship',text:'Demonstrate how to display, raise, lower, and fold the U.S. flag.'},
+  {id:'tf-7b',rank:'Tenderfoot',ref:'7b',category:'Service',text:'Participate in a total of one hour of service in one or more service projects approved by your Scoutmaster. Explain how your service to others relates to the Scout slogan and Scout motto.'},
+  {id:'tf-8',rank:'Tenderfoot',ref:'8',category:'Leadership',text:'Describe the steps in Scouting\u2019s Teaching EDGE method. Use the Teaching EDGE method to teach another person how to tie the square knot.'},
+  {id:'tf-9',rank:'Tenderfoot',ref:'9',category:'Scout Spirit',text:'Demonstrate Scout spirit by living the Scout Oath and Scout Law. Tell how you have done your duty to God and how you have lived four different points of the Scout Law in your everyday life.'},
+  {id:'tf-10',rank:'Tenderfoot',ref:'10',category:'Conference & Review',text:'While working toward the Tenderfoot rank, and after completing Scout rank requirement 7, participate in a Scoutmaster conference.'},
+  {id:'tf-11',rank:'Tenderfoot',ref:'11',category:'Conference & Review',text:'Successfully complete your board of review for the Tenderfoot rank.'},
+  {id:'sc-1a',rank:'Second Class',ref:'1a',category:'Camping & Outdoor Ethics',text:'Since joining Scouts BSA, participate in five separate troop/patrol activities, at least three of which must be held outdoors. Of the outdoor activities, at least two must include overnight camping. These activities do not include troop or patrol meetings. On campouts, spend the night in a tent that you pitch or other structure that you help erect, such as a lean-to, snow cave, or tepee.'},
+  {id:'sc-1b',rank:'Second Class',ref:'1b',category:'Camping & Outdoor Ethics',text:'Recite the principles of Leave No Trace from memory. Explain how you follow them on all outings.'},
+  {id:'sc-1c',rank:'Second Class',ref:'1c',category:'Camping & Outdoor Ethics',text:'On one of these campouts, select a location for your patrol site and recommend it to your patrol leader, senior patrol leader, or troop guide. Explain what factors you should consider when choosing a patrol site and where to pitch a tent.'},
+  {id:'sc-2a',rank:'Second Class',ref:'2a',category:'Cooking',text:'Explain when it is appropriate to use a fire for cooking or other purposes and when it would not be appropriate to do so.'},
+  {id:'sc-2b',rank:'Second Class',ref:'2b',category:'Cooking',text:'Use a pocketknife, and a saw or axe if needed, to prepare tinder, kindling, and fuel wood for a cooking fire.'},
+  {id:'sc-2c',rank:'Second Class',ref:'2c',category:'Cooking',text:'Using a minimum-impact method at an approved outdoor location and time, use the tinder, kindling, and fuel wood from Second Class requirement 2b to demonstrate how to build a fire. Unless prohibited by local fire restrictions, light the fire. After allowing the flames to burn safely for at least two minutes, safely extinguish the flames with minimal impact to the fire site. Properly dispose of the ashes and any charred remains.'},
+  {id:'sc-2d',rank:'Second Class',ref:'2d',category:'Cooking',text:'Explain when it is appropriate to use a lightweight stove and when it is appropriate to use a propane stove. Set up a lightweight stove or propane stove. Light the stove, unless prohibited by local fire restrictions. Describe the safety procedures for using these types of stoves.'},
+  {id:'sc-2e',rank:'Second Class',ref:'2e',category:'Cooking',text:'On one campout, plan and cook one hot breakfast or lunch, selecting foods from MyPlate or the current USDA nutritional model. Explain the importance of good nutrition. Demonstrate how to transport, store, and prepare the foods you selected.'},
+  {id:'sc-2f',rank:'Second Class',ref:'2f',category:'Tools',text:'Demonstrate tying the sheet bend knot. Describe a situation in which you would use this knot.'},
+  {id:'sc-2g',rank:'Second Class',ref:'2g',category:'Tools',text:'Demonstrate tying the bowline knot. Describe a situation in which you would use this knot.'},
+  {id:'sc-3a',rank:'Second Class',ref:'3a',category:'Navigation',text:'Demonstrate how a compass works and how to orient a map. Use a map to point out and tell the meaning of five map symbols.'},
+  {id:'sc-3b',rank:'Second Class',ref:'3b',category:'Navigation',text:'Using a compass and map together, take a 5-mile hike (or 10 miles by bike) approved by your adult leader and your parent or guardian.'},
+  {id:'sc-3c',rank:'Second Class',ref:'3c',category:'Navigation',text:'Describe some hazards or injuries that you might encounter on your hike and what you can do to help prevent them.'},
+  {id:'sc-3d',rank:'Second Class',ref:'3d',category:'Navigation',text:'Demonstrate how to find directions during the day and at night without using a compass or an electronic device.'},
+  {id:'sc-4',rank:'Second Class',ref:'4',category:'Nature',text:'Identify or show evidence of at least 10 kinds of wild animals (such as birds, mammals, reptiles, fish, or mollusks) found in your local area or camping location. You may show evidence by tracks, signs, or photographs you have taken.'},
+  {id:'sc-5a',rank:'Second Class',ref:'5a',category:'Aquatics',text:'Tell what precautions must be taken for a safe swim.'},
+  {id:'sc-5b',rank:'Second Class',ref:'5b',category:'Aquatics',text:'Demonstrate your ability to pass the Scouting America beginner test: Jump feetfirst into water over your head in depth, level off and swim 25 feet on the surface, stop, turn sharply, resume swimming, then return to your starting place.'},
+  {id:'sc-5c',rank:'Second Class',ref:'5c',category:'Aquatics',text:'Demonstrate water rescue methods by reaching with your arm or leg, by reaching with a suitable object, and by throwing lines and objects.'},
+  {id:'sc-5d',rank:'Second Class',ref:'5d',category:'Aquatics',text:'Explain why swimming rescues should not be attempted when a reaching or throwing rescue is possible. Explain why and how a rescue swimmer should avoid contact with the victim.'},
+  {id:'sc-6a',rank:'Second Class',ref:'6a',category:'First Aid & Emergency Preparedness',text:'Demonstrate first aid for the following:',sublist:['Object in the eye','Bite of a warm-blooded animal','Puncture wounds from a splinter, nail, and fishhook','Serious burns (partial thickness, or second-degree)','Heat exhaustion','Shock','Heatstroke, dehydration, hypothermia, and hyperventilation']},
+  {id:'sc-6b',rank:'Second Class',ref:'6b',category:'First Aid & Emergency Preparedness',text:'Show what to do for "hurry" cases of stopped breathing, stroke, severe bleeding, and ingested poisoning.'},
+  {id:'sc-6c',rank:'Second Class',ref:'6c',category:'First Aid & Emergency Preparedness',text:'Tell what you can do while on a campout or hike to prevent or reduce the occurrence of the injuries listed in Second Class requirements 6a and 6b.'},
+  {id:'sc-6d',rank:'Second Class',ref:'6d',category:'First Aid & Emergency Preparedness',text:'Explain what to do in case of accidents that require emergency response in the home and backcountry. Explain what constitutes an emergency and what information you will need to provide to a responder.'},
+  {id:'sc-6e',rank:'Second Class',ref:'6e',category:'First Aid & Emergency Preparedness',text:'Tell how you should respond if you come upon the scene of a vehicular accident.'},
+  {id:'sc-7a',rank:'Second Class',ref:'7a',category:'Fitness',text:'After completing Tenderfoot requirement 6c, be physically active at least 30 minutes each day for five days a week for four weeks. Keep track of your activities.'},
+  {id:'sc-7b',rank:'Second Class',ref:'7b',category:'Fitness',text:'Share your challenges and successes in completing Second Class requirement 7a. Set a goal for continuing to include physical activity as part of your daily life and develop a plan for doing so.'},
+  {id:'sc-7c',rank:'Second Class',ref:'7c',category:'Fitness',text:'Participate in a school, community, or troop program on the dangers of using drugs, alcohol, and tobacco and other practices that could be harmful to your health. Discuss your participation in the program with your family, and explain the dangers of substance addictions. Report to your Scoutmaster or other adult leader in your troop about which parts of the Scout Oath and Scout Law relate to what you learned.'},
+  {id:'sc-8a',rank:'Second Class',ref:'8a',category:'Citizenship',text:'Participate in a flag ceremony for your school, religious institution, chartered organization, community, or Scouting activity.'},
+  {id:'sc-8b',rank:'Second Class',ref:'8b',category:'Citizenship',text:'Explain what respect is due the flag of the United States.'},
+  {id:'sc-8c',rank:'Second Class',ref:'8c',category:'Citizenship',text:'With your parents or guardian, decide on an amount of money that you would like to earn, based on the cost of a specific item you would like to purchase. Develop a written plan to earn the amount agreed upon and follow that plan; it is acceptable to make changes to your plan along the way. Discuss any changes made to your original plan and whether you met your goal.'},
+  {id:'sc-8d',rank:'Second Class',ref:'8d',category:'Citizenship',text:'At a minimum of three locations, compare the cost of the item for which you are saving to determine the best place to purchase it. After completing Second Class requirement 8c, decide if you will use the amount that you earned as originally intended, save all or part of it, or use it for another purpose.'},
+  {id:'sc-8e',rank:'Second Class',ref:'8e',category:'Service',text:'Participate in two hours of service through one or more service projects approved by your Scoutmaster. Tell how your service to others relates to the Scout Oath.'},
+  {id:'sc-9a',rank:'Second Class',ref:'9a',category:'Personal Safety Awareness',text:'Explain the three R\u2019s of personal safety and protection.'},
+  {id:'sc-9b',rank:'Second Class',ref:'9b',category:'Personal Safety Awareness',text:'Describe bullying; tell what the appropriate response is to someone who is bullying you or another person.'},
+  {id:'sc-10',rank:'Second Class',ref:'10',category:'Scout Spirit',text:'Demonstrate Scout spirit by living the Scout Oath and Scout Law. Tell how you have done your duty to God and how you have lived four different points of the Scout Law (not to include those used for Tenderfoot requirement 9) in your everyday life.'},
+  {id:'sc-11',rank:'Second Class',ref:'11',category:'Conference & Review',text:'While working toward the Second Class rank, and after completing Tenderfoot requirement 10, participate in a Scoutmaster conference.'},
+  {id:'sc-12',rank:'Second Class',ref:'12',category:'Conference & Review',text:'Successfully complete your board of review for the Second Class rank.'},
+  {id:'fc-1a',rank:'First Class',ref:'1a',category:'Camping & Outdoor Ethics',text:'Since joining Scouts BSA, participate in 10 separate troop/patrol activities, at least six of which must be held outdoors. Of the outdoor activities, at least three must include overnight camping. These activities do not include troop or patrol meetings. On campouts, spend the night in a tent that you pitch or other structure that you help erect, such as a lean-to, snow cave, or tepee.'},
+  {id:'fc-1b',rank:'First Class',ref:'1b',category:'Camping & Outdoor Ethics',text:'Explain the potential impacts of camping, both on the environment and on other outdoor users. Explain why the Outdoor Code and Leave No Trace principles are important for protecting the outdoors.'},
+  {id:'fc-2a',rank:'First Class',ref:'2a',category:'Cooking',text:'Help plan a menu for one of the above campouts that includes at least one breakfast, one lunch, and one dinner, and that requires cooking at least two of the meals. Tell how the menu includes the foods from MyPlate or the current USDA nutritional model and how it meets nutritional needs for the planned activity or campout.'},
+  {id:'fc-2b',rank:'First Class',ref:'2b',category:'Cooking',text:'Using the menu planned in First Class requirement 2a, make a list showing a budget and the food amounts needed to feed three or more youth. Secure the ingredients.'},
+  {id:'fc-2c',rank:'First Class',ref:'2c',category:'Cooking',text:'Show which pans, utensils, and other gear will be needed to cook and serve these meals.'},
+  {id:'fc-2d',rank:'First Class',ref:'2d',category:'Cooking',text:'Demonstrate the procedures to follow in the safe handling and storage of fresh meats, dairy products, eggs, vegetables, and other perishable food products. Show how to properly dispose of camp garbage, cans, plastic containers, waste water, and other rubbish.'},
+  {id:'fc-2e',rank:'First Class',ref:'2e',category:'Cooking',text:'On one campout, serve as cook. Supervise your assistant(s) in using a stove or building a cooking fire. Prepare the breakfast, lunch, and dinner planned in First Class requirement 2a. Supervise the cleanup.'},
+  {id:'fc-3a',rank:'First Class',ref:'3a',category:'Tools',text:'Discuss when you should and should not use lashings.'},
+  {id:'fc-3b',rank:'First Class',ref:'3b',category:'Tools',text:'Demonstrate tying the timber hitch and clove hitch.'},
+  {id:'fc-3c',rank:'First Class',ref:'3c',category:'Tools',text:'Demonstrate tying the square, shear, and diagonal lashings by joining two or more poles or staves together.'},
+  {id:'fc-3d',rank:'First Class',ref:'3d',category:'Tools',text:'Use lashings to make a useful camp gadget or structure.'},
+  {id:'fc-4a',rank:'First Class',ref:'4a',category:'Navigation',text:'Using a map and compass, complete an orienteering course that covers at least one mile and requires measuring the height and/or width of designated items (tree, tower, canyon, ditch, etc.).'},
+  {id:'fc-4b',rank:'First Class',ref:'4b',category:'Navigation',text:'Demonstrate how to use a handheld GPS unit, GPS app on a smartphone, or other electronic navigation system. Use GPS to find your current location, a destination of your choice, and the route you will take to get there. Follow that route to arrive at your destination.'},
+  {id:'fc-5a',rank:'First Class',ref:'5a',category:'Nature',text:'Identify or show evidence of at least 10 kinds of native plants found in your local area or campsite location. You may show evidence by identifying fallen leaves or fallen fruit that you find in the field, or as part of a collection you have made, or by photographs you have taken.'},
+  {id:'fc-5b',rank:'First Class',ref:'5b',category:'Nature',text:'Identify two ways to obtain a weather forecast for an upcoming activity. Explain why weather forecasts are important when planning for an event.'},
+  {id:'fc-5c',rank:'First Class',ref:'5c',category:'Nature',text:'Describe at least three natural indicators of impending hazardous weather, the potential dangerous events that might result from such weather conditions, and the appropriate actions to take.'},
+  {id:'fc-5d',rank:'First Class',ref:'5d',category:'Nature',text:'Describe extreme weather conditions you might encounter in the outdoors in your local geographic area. Discuss how you would determine ahead of time the potential risk of these types of weather dangers, alternative planning considerations to avoid such risks, and how you would prepare for and respond to those weather conditions.'},
+  {id:'fc-6a',rank:'First Class',ref:'6a',category:'Aquatics',text:'Successfully complete the Scouting America swimmer test.'},
+  {id:'fc-6b',rank:'First Class',ref:'6b',category:'Aquatics',text:'Tell what precautions must be taken for a safe trip afloat.'},
+  {id:'fc-6c',rank:'First Class',ref:'6c',category:'Aquatics',text:'Identify the basic parts of a canoe, kayak, or other boat. Identify the parts of a paddle or an oar.'},
+  {id:'fc-6d',rank:'First Class',ref:'6d',category:'Aquatics',text:'Describe proper body positioning in a watercraft, depending on the type and size of the vessel. Explain the importance of proper body position in the boat.'},
+  {id:'fc-6e',rank:'First Class',ref:'6e',category:'Aquatics',text:'With a helper and a practice victim, show a line rescue both as tender and as rescuer. (The practice victim should be approximately 30 feet from shore in deep water.)'},
+  {id:'fc-7a',rank:'First Class',ref:'7a',category:'First Aid & Emergency Preparedness',text:'Demonstrate bandages for a sprained ankle and for injuries on the head, the upper arm, and the collarbone.'},
+  {id:'fc-7b',rank:'First Class',ref:'7b',category:'First Aid & Emergency Preparedness',text:'By yourself and with a partner, show how to: transport a person from a smoke-filled room; transport for at least 25 yards a person with a sprained ankle.'},
+  {id:'fc-7c',rank:'First Class',ref:'7c',category:'First Aid & Emergency Preparedness',text:'Tell the five most common signals of a heart attack. Explain the steps (procedures) in cardiopulmonary resuscitation (CPR).'},
+  {id:'fc-7d',rank:'First Class',ref:'7d',category:'First Aid & Emergency Preparedness',text:'Tell what utility services exist in your home or meeting place. Describe potential hazards associated with these utilities and tell how to respond in emergency situations.'},
+  {id:'fc-7e',rank:'First Class',ref:'7e',category:'First Aid & Emergency Preparedness',text:'Develop an emergency action plan for your home that includes what to do in case of fire, storm, power outage, and water outage.'},
+  {id:'fc-7f',rank:'First Class',ref:'7f',category:'First Aid & Emergency Preparedness',text:'Explain how to obtain potable water in an emergency.'},
+  {id:'fc-8a',rank:'First Class',ref:'8a',category:'Fitness',text:'After completing Second Class requirement 7a, be physically active at least 30 minutes each day for five days a week for four weeks. Keep track of your activities.'},
+  {id:'fc-8b',rank:'First Class',ref:'8b',category:'Fitness',text:'Share your challenges and successes in completing First Class requirement 8a. Set a goal for continuing to include physical activity as part of your daily life.'},
+  {id:'fc-9a',rank:'First Class',ref:'9a',category:'Citizenship',text:'Visit and discuss with a selected individual approved by your leader (for example, an elected official, judge, attorney, civil servant, principal, or teacher) the constitutional rights and obligations of a U.S. citizen.'},
+  {id:'fc-9b',rank:'First Class',ref:'9b',category:'Citizenship',text:'Investigate an environmental issue affecting your community. Share what you learned about that issue with your patrol or troop. Tell what, if anything, could be done by you or your community to address the concern.'},
+  {id:'fc-9c',rank:'First Class',ref:'9c',category:'Citizenship',text:'On a Scouting or family outing, take note of the trash and garbage you produce. Before your next similar outing, decide how you can reduce, recycle, or repurpose what you take on that outing, and then put those plans into action. Compare your results.'},
+  {id:'fc-9d',rank:'First Class',ref:'9d',category:'Service',text:'Participate in three hours of service through one or more service projects approved by your Scoutmaster. The project(s) must not be the same service project(s) used for Tenderfoot requirement 7b and Second Class requirement 8e. Explain how your service to others relates to the Scout Law.'},
+  {id:'fc-10',rank:'First Class',ref:'10',category:'Leadership',text:'Tell someone who is eligible to join Scouts BSA, or an inactive Scout, about your Scouting activities. Invite this person to an outing, activity, service project, or meeting. Provide information on how to join, or encourage the inactive Scout to become active. Share your efforts with your Scoutmaster or other adult leader.'},
+  {id:'fc-11',rank:'First Class',ref:'11',category:'Scout Spirit',text:'Demonstrate Scout spirit by living the Scout Oath and Scout Law. Tell how you have done your duty to God and how you have lived four different points of the Scout Law (different from those points used for previous ranks) in your everyday life.'},
+  {id:'fc-12',rank:'First Class',ref:'12',category:'Conference & Review',text:'While working toward the First Class rank, and after completing Second Class requirement 11, participate in a Scoutmaster conference.'},
+  {id:'fc-13',rank:'First Class',ref:'13',category:'Conference & Review',text:'Successfully complete your board of review for the First Class rank.'},
+  {id:'star-1',rank:'Star',ref:'1',category:'Active Membership',text:'Be active in your troop for at least four months as a First Class Scout.'},
+  {id:'star-2',rank:'Star',ref:'2',category:'Scout Spirit',text:'As a First Class Scout, demonstrate Scout spirit by living the Scout Oath and Scout Law. Tell how you have done your duty to God and how you have lived the Scout Oath and Scout Law in your everyday life.'},
+  {id:'star-3',rank:'Star',ref:'3',category:'Service',text:'Earn six merit badges, including any four from the required list for Eagle. (Track these in the Merit Badges tab.)'},
+  {id:'star-4',rank:'Star',ref:'4',category:'Service',text:'While a First Class Scout, participate in six hours of service through one or more service projects approved by your Scoutmaster.'},
+  {id:'star-5',rank:'Star',ref:'5',category:'Leadership',text:'While a First Class Scout, serve actively in your troop for four months in one or more approved positions of responsibility (or carry out a Scoutmaster-approved leadership project to help the troop).'},
+  {id:'star-6a',rank:'Star',ref:'6a',category:'Personal Safety Awareness',text:'With your parent or guardian, complete the exercises in the pamphlet How to Protect Your Children from Child Abuse: A Parent\u2019s Guide.'},
+  {id:'star-6b',rank:'Star',ref:'6b',category:'Personal Safety Awareness',text:'With your parent or guardian\u2019s permission, view the Personal Safety Awareness videos.'},
+  {id:'star-7',rank:'Star',ref:'7',category:'Conference & Review',text:'While a First Class Scout, participate in a Scoutmaster conference.'},
+  {id:'star-8',rank:'Star',ref:'8',category:'Conference & Review',text:'Successfully complete your board of review for the Star rank.'},
+  {id:'life-1',rank:'Life',ref:'1',category:'Active Membership',text:'Be active in your troop for at least six months as a Star Scout.'},
+  {id:'life-2',rank:'Life',ref:'2',category:'Scout Spirit',text:'As a Star Scout, demonstrate Scout spirit by living the Scout Oath and Scout Law. Tell how you have done your duty to God and how you have lived the Scout Oath and Scout Law in your everyday life.'},
+  {id:'life-3',rank:'Life',ref:'3',category:'Service',text:'Earn five more merit badges (so that you have 11 in all), including any three additional badges from the required list for Eagle. (Track these in the Merit Badges tab.)'},
+  {id:'life-4',rank:'Life',ref:'4',category:'Service',text:'While a Star Scout, participate in six hours of service through one or more service projects approved by your Scoutmaster. At least three hours of this service must be conservation-related.'},
+  {id:'life-5',rank:'Life',ref:'5',category:'Leadership',text:'While a Star Scout, serve actively in your troop for six months in one or more of the approved positions of responsibility (or carry out a Scoutmaster-approved leadership project to help the troop).'},
+  {id:'life-6',rank:'Life',ref:'6',category:'Leadership',text:'While a Star Scout, use the Teaching EDGE method to teach another Scout (preferably younger than you) the skills from ONE of the following choices, so that the Scout is prepared to pass those requirements to their Scoutmaster\u2019s satisfaction: (a) Tenderfoot 4a and 4b, (b) Second Class 2b, 2c, and 2d, (c) Second Class 3a and 3d, (d) First Class 3a, 3b, 3c, and 3d, (e) First Class 4a and 4b, (f) Second Class 6a and 6b, (g) First Class 7a and 7b, or (h) Three requirements from one of the required Eagle merit badges, as approved by your Scoutmaster.'},
+  {id:'life-7',rank:'Life',ref:'7',category:'Conference & Review',text:'While a Star Scout, participate in a Scoutmaster conference.'},
+  {id:'life-8',rank:'Life',ref:'8',category:'Conference & Review',text:'Successfully complete your board of review for the Life rank.'},
+  {id:'eagle-1',rank:'Eagle',ref:'1',category:'Active Membership',text:'Be active in your troop for at least six months as a Life Scout.'},
+  {id:'eagle-2',rank:'Eagle',ref:'2',category:'Scout Spirit',text:'As a Life Scout, demonstrate Scout Spirit by living the Scout Oath and Scout Law. Tell how you have done your duty to God, how you have lived the Scout Oath and Scout Law in your everyday life, and how your understanding of the Scout Oath and Scout Law will guide your life in the future. List on your Eagle Scout Rank Application the names of individuals who know you personally and would be willing to provide a recommendation on your behalf, including parents/guardians, religious, educational, employer (if employed), and two other references.'},
+  {id:'eagle-3',rank:'Eagle',ref:'3',category:'Service',text:'Earn a total of 21 merit badges (10 more than required for the Life rank), including the 13 Eagle-required merit badges. (Track these in the Merit Badges tab.)'},
+  {id:'eagle-4',rank:'Eagle',ref:'4',category:'Leadership',text:'While a Life Scout, serve actively in your troop for six months in one or more of the approved positions of responsibility. Note: Assistant patrol leader and bugler are not approved positions of responsibility for Eagle, and a Scoutmaster-approved leadership project cannot be used in lieu of serving in a position of responsibility.'},
+  {id:'eagle-5',rank:'Eagle',ref:'5',category:'Eagle Service Project',text:'While a Life Scout, plan, develop, and give leadership to others in a service project helpful to any religious institution, any school, or your community. (The project must benefit an organization other than Scouting America.) A project proposal must be approved by the organization benefiting from the effort, your Scoutmaster and unit committee, and the council or district before you start. You must use the Eagle Scout Service Project Workbook (Scouting America publication No. 512-927).'},
+  {id:'eagle-6',rank:'Eagle',ref:'6',category:'Conference & Review',text:'While a Life Scout, participate in a Scoutmaster conference. In preparation for your board of review, prepare and attach to your Eagle Scout Rank Application a statement of your ambitions and life purpose and a listing of positions held in your religious institution, school, camp, community, or other organizations, during which you demonstrated leadership skills. Include honors and awards received during this service.'},
+  {id:'eagle-7',rank:'Eagle',ref:'7',category:'Conference & Review',text:'Successfully complete your board of review for the Eagle Scout rank.'}
+];
+
+var MERIT_BADGES = {
+  required: [
+    {id:'mb-firstaid',name:'First Aid'},
+    {id:'mb-citcom',name:'Citizenship in the Community'},
+    {id:'mb-citnat',name:'Citizenship in the Nation'},
+    {id:'mb-citsoc',name:'Citizenship in Society'},
+    {id:'mb-citworld',name:'Citizenship in the World'},
+    {id:'mb-comm',name:'Communication'},
+    {id:'mb-cooking',name:'Cooking'},
+    {id:'mb-personalfit',name:'Personal Fitness'},
+    {id:'mb-personalmgmt',name:'Personal Management'},
+    {id:'mb-camping',name:'Camping'},
+    {id:'mb-familylife',name:'Family Life'}
+  ],
+  choice1: { label: 'CHOOSE ONE: Emergency Preparedness OR Lifesaving', helper: 'You must complete one of these. The other can count as one of your 7 optional badges.', options: [{id:'mb-empprep',name:'Emergency Preparedness'},{id:'mb-lifesaving',name:'Lifesaving'}] },
+  choice2: { label: 'CHOOSE ONE: Environmental Science OR Sustainability', helper: 'You must complete one of these. The other can count as one of your 7 optional badges.', options: [{id:'mb-envsci',name:'Environmental Science'},{id:'mb-sustain',name:'Sustainability'}] },
+  choice3: { label: 'CHOOSE ONE: Swimming OR Hiking OR Cycling', helper: 'You must complete one of these. The others can count as part of your 7 optional badges.', options: [{id:'mb-swim',name:'Swimming'},{id:'mb-hiking',name:'Hiking'},{id:'mb-cycling',name:'Cycling'}] }
+};
+
+var RANK_ORDER = ['Scout','Tenderfoot','Second Class','First Class','Star','Life','Eagle'];
+
+// ============================================================
+// STATE
+// ============================================================
+var TOKEN_KEY = 'eagle_track_token';
+var session = { token: null, user: null };
+var state = { progress: {} };
+var currentTab = 'category';
+var parentMode = false;  // when true: viewing someone else's data, read-only
+var parentScoutName = '';
+
+// ============================================================
+// API CLIENT
+// ============================================================
+function api(action, data) {
+  return fetch(BACKEND_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: action, data: data || {} })
+  }).then(function (res) {
+    if (!res.ok) throw new Error('Network error: ' + res.status);
+    return res.json();
+  });
+}
+
+// ============================================================
+// SYNC STATUS
+// ============================================================
+var syncTimeout = null;
+function setSync(state, msg) {
+  var el = document.getElementById('sync-status');
+  if (!el) return;
+  el.className = 'sync-status ' + state;
+  el.textContent = msg;
+  if (state === 'synced') {
+    if (syncTimeout) clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(function () {
+      if (el.classList.contains('synced')) el.textContent = '';
+    }, 2000);
+  }
+}
+
+// ============================================================
+// AUTH FLOW
+// ============================================================
+function showLoading() {
+  document.getElementById('loading-screen').classList.remove('hidden');
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('hidden');
+}
+function showAuth() {
+  document.getElementById('loading-screen').classList.add('hidden');
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('app').classList.add('hidden');
+}
+function showApp() {
+  document.getElementById('loading-screen').classList.add('hidden');
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+}
+
+function showAuthError(msg) {
+  document.getElementById('auth-info').classList.add('hidden');
+  var el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+function showAuthInfo(msg) {
+  document.getElementById('auth-error').classList.add('hidden');
+  var el = document.getElementById('auth-info');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+function clearAuthMessages() {
+  document.getElementById('auth-error').classList.add('hidden');
+  document.getElementById('auth-info').classList.add('hidden');
+}
+
+function setAuthMode(mode) {
+  var tabs = document.querySelectorAll('.auth-tab');
+  for (var i = 0; i < tabs.length; i++) {
+    if (tabs[i].getAttribute('data-mode') === mode) tabs[i].classList.add('active');
+    else tabs[i].classList.remove('active');
+  }
+  if (mode === 'login') {
+    document.getElementById('login-form').classList.remove('hidden');
+    document.getElementById('signup-form').classList.add('hidden');
+  } else {
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('signup-form').classList.remove('hidden');
+  }
+  clearAuthMessages();
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  clearAuthMessages();
+  var btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> SIGNING IN...';
+
+  var email = document.getElementById('login-email').value;
+  var password = document.getElementById('login-password').value;
+
+  api('login', { email: email, password: password })
+    .then(function (res) {
+      btn.disabled = false;
+      btn.textContent = 'LOG IN';
+      if (!res.ok) {
+        showAuthError(res.error || 'Login failed');
+        return;
+      }
+      session.token = res.token;
+      session.user = res.user;
+      localStorage.setItem(TOKEN_KEY, res.token);
+      loadProgressAndShow();
+    })
+    .catch(function (err) {
+      btn.disabled = false;
+      btn.textContent = 'LOG IN';
+      showAuthError('Network error: ' + err.message);
+    });
+}
+
+function handleSignup(e) {
+  e.preventDefault();
+  clearAuthMessages();
+  var btn = document.getElementById('signup-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> CREATING ACCOUNT...';
+
+  var name = document.getElementById('signup-name').value;
+  var email = document.getElementById('signup-email').value;
+  var password = document.getElementById('signup-password').value;
+
+  api('signup', { displayName: name, email: email, password: password })
+    .then(function (res) {
+      btn.disabled = false;
+      btn.textContent = 'CREATE ACCOUNT';
+      if (!res.ok) {
+        showAuthError(res.error || 'Signup failed');
+        return;
+      }
+      session.token = res.token;
+      session.user = res.user;
+      localStorage.setItem(TOKEN_KEY, res.token);
+      loadProgressAndShow();
+    })
+    .catch(function (err) {
+      btn.disabled = false;
+      btn.textContent = 'CREATE ACCOUNT';
+      showAuthError('Network error: ' + err.message);
+    });
+}
+
+function handleLogout() {
+  if (!confirm('Sign out?')) return;
+  var token = session.token;
+  session = { token: null, user: null };
+  state = { progress: {} };
+  localStorage.removeItem(TOKEN_KEY);
+  api('logout', { token: token }).catch(function () {});
+  showAuth();
+  setAuthMode('login');
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+}
+
+function loadProgressAndShow() {
+  showLoading();
+  api('getProgress', { token: session.token })
+    .then(function (res) {
+      if (!res.ok) {
+        // Token may be invalid/expired
+        localStorage.removeItem(TOKEN_KEY);
+        session = { token: null, user: null };
+        showAuth();
+        showAuthError(res.error || 'Session expired. Please sign in again.');
+        return;
+      }
+      state.progress = res.progress || {};
+      parentMode = false;
+      renderApp();
+      showApp();
+    })
+    .catch(function (err) {
+      showAuth();
+      showAuthError('Network error: ' + err.message);
+    });
+}
+
+// ============================================================
+// PARENT MODE
+// ============================================================
+function openParentModal() {
+  showModal(
+    'PARENT VIEW',
+    'Enter the 6-digit share code your scout gave you to view their progress in read-only mode.',
+    [
+      { type: 'input', id: 'parent-code-input', label: 'SHARE CODE', maxlength: 6, placeholder: '123456' }
+    ],
+    [
+      { label: 'CANCEL', action: closeModal },
+      { label: 'VIEW PROGRESS', primary: true, action: submitParentCode }
+    ]
+  );
+}
+
+function submitParentCode() {
+  var input = document.getElementById('parent-code-input');
+  var code = input.value.trim();
+  if (!/^\d{6}$/.test(code)) {
+    setModalError('Share code must be 6 digits');
+    return;
+  }
+  setModalError('');
+  setModalSubmitting(true);
+  api('parentLookup', { shareCode: code })
+    .then(function (res) {
+      setModalSubmitting(false);
+      if (!res.ok) {
+        setModalError(res.error || 'Could not find that scout');
+        return;
+      }
+      parentMode = true;
+      parentScoutName = res.scout.displayName;
+      state.progress = res.progress || {};
+      session.user = { displayName: res.scout.displayName };
+      closeModal();
+      renderApp();
+      showApp();
+    })
+    .catch(function (err) {
+      setModalSubmitting(false);
+      setModalError('Network error: ' + err.message);
+    });
+}
+
+function exitParentMode() {
+  parentMode = false;
+  parentScoutName = '';
+  state = { progress: {} };
+  session = { token: null, user: null };
+  showAuth();
+  setAuthMode('login');
+}
+
+// ============================================================
+// PROGRESS TOGGLES
+// ============================================================
+function isDone(id) { return state.progress[id] && state.progress[id].done; }
+function isSigned(id) { return state.progress[id] && state.progress[id].signed; }
+
+function setProgress(id, done, signed) {
+  if (parentMode) return; // read-only
+  if (!state.progress[id]) state.progress[id] = { done: false, signed: false };
+  state.progress[id].done = done;
+  state.progress[id].signed = signed;
+  if (!done && !signed) delete state.progress[id];
+
+  setSync('syncing', 'SAVING...');
+  api('saveProgress', { token: session.token, itemId: id, done: done, signed: signed })
+    .then(function (res) {
+      if (!res.ok) {
+        setSync('error', 'SYNC ERROR');
+        if (res.error && res.error.indexOf('session') !== -1) {
+          // Session died — kick to login
+          alert('Your session expired. Please sign in again.');
+          handleLogout();
+        }
+      } else {
+        setSync('synced', 'SAVED');
+      }
+    })
+    .catch(function () {
+      setSync('error', 'OFFLINE — CHANGES NOT SAVED');
+    });
+  renderApp();
+}
+
+function toggleDone(id) {
+  if (parentMode) return;
+  var cur = state.progress[id] || { done: false, signed: false };
+  if (cur.done) {
+    setProgress(id, false, false);
+  } else {
+    setProgress(id, true, cur.signed);
+  }
+}
+
+function toggleSigned(id) {
+  if (parentMode) return;
+  var cur = state.progress[id] || { done: false, signed: false };
+  if (cur.signed) {
+    setProgress(id, cur.done, false);
+  } else {
+    setProgress(id, true, true);
+  }
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+var modalSubmittingButton = null;
+
+function showModal(title, text, fields, actions) {
+  var root = document.getElementById('modal-root');
+  root.innerHTML = '';
+
+  var backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop';
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) closeModal();
+  });
+
+  var modal = document.createElement('div');
+  modal.className = 'modal';
+
+  var titleEl = document.createElement('div');
+  titleEl.className = 'modal-title';
+  titleEl.textContent = title;
+  modal.appendChild(titleEl);
+
+  if (text) {
+    var textEl = document.createElement('div');
+    textEl.className = 'modal-text';
+    textEl.textContent = text;
+    modal.appendChild(textEl);
+  }
+
+  var errorEl = document.createElement('div');
+  errorEl.className = 'auth-error hidden';
+  errorEl.id = 'modal-error';
+  modal.appendChild(errorEl);
+
+  if (fields && fields.length) {
+    for (var i = 0; i < fields.length; i++) {
+      var f = fields[i];
+      if (f.type === 'input' || f.type === 'password') {
+        var fieldDiv = document.createElement('div');
+        fieldDiv.className = 'field';
+        var label = document.createElement('label');
+        label.textContent = f.label;
+        fieldDiv.appendChild(label);
+        var input = document.createElement('input');
+        input.type = f.type === 'password' ? 'password' : 'text';
+        input.id = f.id;
+        if (f.maxlength) input.maxLength = f.maxlength;
+        if (f.placeholder) input.placeholder = f.placeholder;
+        fieldDiv.appendChild(input);
+        if (f.helper) {
+          var helper = document.createElement('div');
+          helper.className = 'field-helper';
+          helper.textContent = f.helper;
+          fieldDiv.appendChild(helper);
+        }
+        modal.appendChild(fieldDiv);
+      } else if (f.type === 'display') {
+        var disp = document.createElement('div');
+        disp.className = 'share-code-display';
+        var val = document.createElement('div');
+        val.className = 'share-code-value';
+        val.textContent = f.value;
+        disp.appendChild(val);
+        modal.appendChild(disp);
+      }
+    }
+  }
+
+  if (actions && actions.length) {
+    var actionsDiv = document.createElement('div');
+    actionsDiv.className = 'modal-actions';
+    for (var j = 0; j < actions.length; j++) {
+      (function (a) {
+        var btn = document.createElement('button');
+        btn.className = 'modal-btn' + (a.primary ? ' primary' : '');
+        btn.textContent = a.label;
+        btn.addEventListener('click', a.action);
+        if (a.primary) modalSubmittingButton = btn;
+        actionsDiv.appendChild(btn);
+      })(actions[j]);
+    }
+    modal.appendChild(actionsDiv);
+  }
+
+  backdrop.appendChild(modal);
+  root.appendChild(backdrop);
+
+  // Auto-focus first input
+  var firstInput = modal.querySelector('input');
+  if (firstInput) setTimeout(function () { firstInput.focus(); }, 50);
+}
+
+function closeModal() {
+  document.getElementById('modal-root').innerHTML = '';
+  modalSubmittingButton = null;
+}
+
+function setModalError(msg) {
+  var el = document.getElementById('modal-error');
+  if (!el) return;
+  if (msg) {
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function setModalSubmitting(yes) {
+  if (!modalSubmittingButton) return;
+  if (yes) {
+    modalSubmittingButton.disabled = true;
+    modalSubmittingButton.innerHTML = '<span class="spinner"></span>';
+  } else {
+    modalSubmittingButton.disabled = false;
+  }
+}
+
+function openShareModal() {
+  showModal(
+    'YOUR SHARE CODE',
+    'Give this 6-digit code to a parent or guardian. They can use it to view your progress in read-only mode.',
+    [{ type: 'display', value: session.user.shareCode || '------' }],
+    [{ label: 'CLOSE', action: closeModal, primary: true }]
+  );
+}
+
+function openChangePasswordModal() {
+  showModal(
+    'CHANGE PASSWORD',
+    'Enter your current password and a new password (minimum 8 characters).',
+    [
+      { type: 'password', id: 'cp-old', label: 'CURRENT PASSWORD' },
+      { type: 'password', id: 'cp-new', label: 'NEW PASSWORD' },
+      { type: 'password', id: 'cp-confirm', label: 'CONFIRM NEW PASSWORD' }
+    ],
+    [
+      { label: 'CANCEL', action: closeModal },
+      { label: 'CHANGE PASSWORD', primary: true, action: submitChangePassword }
+    ]
+  );
+}
+
+function submitChangePassword() {
+  var oldPw = document.getElementById('cp-old').value;
+  var newPw = document.getElementById('cp-new').value;
+  var confirmPw = document.getElementById('cp-confirm').value;
+
+  if (newPw.length < 8) { setModalError('New password must be at least 8 characters'); return; }
+  if (newPw !== confirmPw) { setModalError('New passwords do not match'); return; }
+
+  setModalError('');
+  setModalSubmitting(true);
+  api('changePassword', { token: session.token, oldPassword: oldPw, newPassword: newPw })
+    .then(function (res) {
+      setModalSubmitting(false);
+      if (!res.ok) {
+        setModalError(res.error || 'Failed to change password');
+        return;
+      }
+      closeModal();
+      alert('Password changed successfully.');
+    })
+    .catch(function (err) {
+      setModalSubmitting(false);
+      setModalError('Network error: ' + err.message);
+    });
+}
+
+// ============================================================
+// RENDERING (cards, tabs, progress)
+// ============================================================
+function makeToggle(checked, kind, onClick) {
+  var btn = document.createElement('button');
+  var cls = 'toggle';
+  if (kind === 'signed') cls += ' toggle-signed';
+  if (checked) cls += ' on';
+  if (parentMode) cls += ' readonly';
+  btn.className = cls;
+  btn.setAttribute('role', 'switch');
+  btn.setAttribute('aria-checked', String(checked));
+  if (parentMode) btn.disabled = true;
+  else btn.addEventListener('click', onClick);
+  var knob = document.createElement('span');
+  knob.className = 'toggle-knob';
+  btn.appendChild(knob);
+  return btn;
+}
+
+function buildToggleStack(reqId) {
+  var stack = document.createElement('div');
+  stack.className = 'toggle-stack';
+  var doneRow = document.createElement('div');
+  doneRow.className = 'toggle-row';
+  doneRow.appendChild(makeToggle(isDone(reqId), 'done', function () { toggleDone(reqId); }));
+  var doneLabel = document.createElement('span');
+  doneLabel.className = 'toggle-label';
+  doneLabel.textContent = 'DONE';
+  doneRow.appendChild(doneLabel);
+  stack.appendChild(doneRow);
+  var signedRow = document.createElement('div');
+  signedRow.className = 'toggle-row';
+  signedRow.appendChild(makeToggle(isSigned(reqId), 'signed', function () { toggleSigned(reqId); }));
+  var signedLabel = document.createElement('span');
+  signedLabel.className = 'toggle-label';
+  signedLabel.textContent = 'SIGNED OFF';
+  signedRow.appendChild(signedLabel);
+  stack.appendChild(signedRow);
+  return stack;
+}
+
+function buildReqCard(req, opts) {
+  opts = opts || {};
+  var card = document.createElement('div');
+  var classes = ['req-card'];
+  if (isDone(req.id)) classes.push('done');
+  if (isSigned(req.id)) classes.push('signed');
+  card.className = classes.join(' ');
+  var inner = document.createElement('div');
+  inner.className = 'req-inner';
+  inner.appendChild(buildToggleStack(req.id));
+  var body = document.createElement('div');
+  body.className = 'req-body';
+  var tagRow = document.createElement('div');
+  tagRow.className = 'req-tag-row';
+  var idTag = document.createElement('span');
+  idTag.className = 'req-id';
+  idTag.textContent = req.ref;
+  tagRow.appendChild(idTag);
+  if (opts.showRank) {
+    var rankTag = document.createElement('span');
+    rankTag.className = 'req-rank-tag';
+    rankTag.style.background = RANK_COLORS[req.rank];
+    rankTag.textContent = req.rank.toUpperCase();
+    tagRow.appendChild(rankTag);
+  }
+  if (isSigned(req.id)) {
+    var stamp = document.createElement('span');
+    stamp.className = 'signed-stamp';
+    stamp.textContent = '\u2713 SIGNED OFF';
+    tagRow.appendChild(stamp);
+  }
+  body.appendChild(tagRow);
+  var text = document.createElement('div');
+  text.className = 'req-text';
+  text.textContent = req.text;
+  body.appendChild(text);
+  if (req.sublist && req.sublist.length) {
+    var ul = document.createElement('ul');
+    ul.className = 'req-sublist';
+    for (var s = 0; s < req.sublist.length; s++) {
+      var li = document.createElement('li');
+      li.textContent = req.sublist[s];
+      ul.appendChild(li);
+    }
+    body.appendChild(ul);
+  }
+  inner.appendChild(body);
+  card.appendChild(inner);
+  return card;
+}
+
+function buildMbCard(mb, kind) {
+  var card = document.createElement('div');
+  var classes = ['mb-card'];
+  if (kind) classes.push(kind);
+  if (isDone(mb.id)) classes.push('done');
+  if (isSigned(mb.id)) classes.push('signed');
+  card.className = classes.join(' ');
+  card.appendChild(buildToggleStack(mb.id));
+  var info = document.createElement('div');
+  info.className = 'mb-info';
+  var name = document.createElement('div');
+  name.className = 'mb-name';
+  name.textContent = mb.name;
+  info.appendChild(name);
+  var tag = document.createElement('div');
+  tag.className = 'mb-tag';
+  tag.textContent = kind === 'choice' ? 'EAGLE REQUIRED \u00b7 CHOOSE ONE' : 'EAGLE REQUIRED';
+  info.appendChild(tag);
+  if (isSigned(mb.id)) {
+    var stamp = document.createElement('span');
+    stamp.className = 'signed-stamp';
+    stamp.textContent = '\u2713 SIGNED OFF';
+    stamp.style.marginTop = '0.375rem';
+    info.appendChild(stamp);
+  }
+  card.appendChild(info);
+  return card;
+}
+
+function renderRankTab() {
+  var container = document.getElementById('tab-rank');
+  container.innerHTML = '';
+  for (var r = 0; r < RANK_ORDER.length; r++) {
+    var rank = RANK_ORDER[r];
+    var rankReqs = [];
+    for (var i = 0; i < REQUIREMENTS.length; i++) {
+      if (REQUIREMENTS[i].rank === rank) rankReqs.push(REQUIREMENTS[i]);
+    }
+    var doneCount = 0, signedCount = 0;
+    for (var k = 0; k < rankReqs.length; k++) {
+      if (isDone(rankReqs[k].id)) doneCount++;
+      if (isSigned(rankReqs[k].id)) signedCount++;
+    }
+    var block = document.createElement('div');
+    block.className = 'rank-block';
+    block.style.borderLeftColor = RANK_COLORS[rank];
+    var header = document.createElement('div');
+    header.className = 'rank-header';
+    var name = document.createElement('div');
+    name.className = 'rank-name';
+    name.textContent = rank.toUpperCase() + ' RANK';
+    header.appendChild(name);
+    var prog = document.createElement('div');
+    prog.className = 'rank-progress-text';
+    prog.textContent = signedCount + ' SIGNED \u00b7 ' + doneCount + ' DONE \u00b7 ' + rankReqs.length + ' TOTAL';
+    header.appendChild(prog);
+    block.appendChild(header);
+    var seen = {};
+    var orderedCats = [];
+    for (var p = 0; p < rankReqs.length; p++) {
+      if (!seen[rankReqs[p].category]) {
+        seen[rankReqs[p].category] = true;
+        orderedCats.push(rankReqs[p].category);
+      }
+    }
+    for (var c = 0; c < orderedCats.length; c++) {
+      var cat = orderedCats[c];
+      var section = document.createElement('div');
+      section.className = 'rank-cat-section';
+      var label = document.createElement('div');
+      label.className = 'rank-cat-label';
+      label.textContent = cat.toUpperCase();
+      label.style.color = CATEGORY_COLORS[cat] || '#a8a29e';
+      section.appendChild(label);
+      for (var q = 0; q < rankReqs.length; q++) {
+        if (rankReqs[q].category === cat) {
+          section.appendChild(buildReqCard(rankReqs[q], {}));
+        }
+      }
+      block.appendChild(section);
+    }
+    container.appendChild(block);
+  }
+}
+
+function renderCategoryTab() {
+  var container = document.getElementById('tab-category');
+  container.innerHTML = '';
+  var categories = [];
+  for (var ck in CATEGORY_COLORS) {
+    if (CATEGORY_COLORS.hasOwnProperty(ck)) categories.push(ck);
+  }
+  for (var i = 0; i < categories.length; i++) {
+    var cat = categories[i];
+    var catReqs = [];
+    for (var j = 0; j < REQUIREMENTS.length; j++) {
+      if (REQUIREMENTS[j].category === cat) catReqs.push(REQUIREMENTS[j]);
+    }
+    if (catReqs.length === 0) continue;
+    catReqs.sort(function (a, b) {
+      var ai = RANK_ORDER.indexOf(a.rank);
+      var bi = RANK_ORDER.indexOf(b.rank);
+      if (ai !== bi) return ai - bi;
+      return a.ref.localeCompare(b.ref, undefined, { numeric: true });
+    });
+    var doneCount = 0, signedCount = 0;
+    for (var k = 0; k < catReqs.length; k++) {
+      if (isDone(catReqs[k].id)) doneCount++;
+      if (isSigned(catReqs[k].id)) signedCount++;
+    }
+    var block = document.createElement('div');
+    block.className = 'cat-block';
+    block.style.borderLeftColor = CATEGORY_COLORS[cat];
+    var header = document.createElement('div');
+    header.className = 'cat-header';
+    var name = document.createElement('div');
+    name.className = 'cat-name';
+    name.textContent = cat.toUpperCase();
+    name.style.color = CATEGORY_COLORS[cat];
+    header.appendChild(name);
+    var prog = document.createElement('div');
+    prog.className = 'cat-progress';
+    prog.textContent = signedCount + ' / ' + catReqs.length + ' SIGNED';
+    header.appendChild(prog);
+    block.appendChild(header);
+    for (var m = 0; m < catReqs.length; m++) {
+      block.appendChild(buildReqCard(catReqs[m], { showRank: true }));
+    }
+    container.appendChild(block);
+  }
+}
+
+function renderMeritTab() {
+  var container = document.getElementById('tab-merit');
+  container.innerHTML = '';
+  var reqLabel = document.createElement('div');
+  reqLabel.className = 'mb-group-label';
+  reqLabel.textContent = 'REQUIRED \u2014 EARN ALL ELEVEN';
+  container.appendChild(reqLabel);
+  var reqGrid = document.createElement('div');
+  reqGrid.className = 'mb-grid';
+  for (var i = 0; i < MERIT_BADGES.required.length; i++) {
+    reqGrid.appendChild(buildMbCard(MERIT_BADGES.required[i], null));
+  }
+  container.appendChild(reqGrid);
+  var groups = [MERIT_BADGES.choice1, MERIT_BADGES.choice2, MERIT_BADGES.choice3];
+  for (var g = 0; g < groups.length; g++) {
+    var group = groups[g];
+    var label = document.createElement('div');
+    label.className = 'mb-group-label';
+    label.textContent = group.label;
+    container.appendChild(label);
+    var helper = document.createElement('div');
+    helper.className = 'mb-helper';
+    helper.textContent = group.helper;
+    container.appendChild(helper);
+    var grid = document.createElement('div');
+    grid.className = 'mb-grid';
+    for (var o = 0; o < group.options.length; o++) {
+      grid.appendChild(buildMbCard(group.options[o], 'choice'));
+    }
+    container.appendChild(grid);
+  }
+}
+
+function overallStats() {
+  var totalReq = REQUIREMENTS.length;
+  var signedReq = 0;
+  for (var i = 0; i < REQUIREMENTS.length; i++) {
+    if (isSigned(REQUIREMENTS[i].id)) signedReq++;
+  }
+  var totalMb = MERIT_BADGES.required.length + 3;
+  var signedMb = 0;
+  for (var j = 0; j < MERIT_BADGES.required.length; j++) {
+    if (isSigned(MERIT_BADGES.required[j].id)) signedMb++;
+  }
+  if (anySigned(MERIT_BADGES.choice1.options)) signedMb++;
+  if (anySigned(MERIT_BADGES.choice2.options)) signedMb++;
+  if (anySigned(MERIT_BADGES.choice3.options)) signedMb++;
+  return {
+    total: totalReq + totalMb,
+    signed: signedReq + signedMb,
+    reqTotal: totalReq, reqSigned: signedReq,
+    mbTotal: totalMb, mbSigned: signedMb
+  };
+}
+function anySigned(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    if (isSigned(arr[i].id)) return true;
+  }
+  return false;
+}
+
+function renderProgress() {
+  var stats = overallStats();
+  var pct = stats.total > 0 ? Math.round((stats.signed / stats.total) * 100) : 0;
+  document.getElementById('overall-pct').textContent = pct;
+  document.getElementById('overall-fill').style.width = pct + '%';
+  document.getElementById('overall-detail').textContent =
+    stats.signed + ' of ' + stats.total + ' signed off \u00b7 ' +
+    stats.reqSigned + '/' + stats.reqTotal + ' requirements \u00b7 ' +
+    stats.mbSigned + '/' + stats.mbTotal + ' merit badges';
+  document.getElementById('header-stats').textContent =
+    'TRACKING THE TRAIL TO EAGLE \u00b7 ' + pct + '% SIGNED OFF';
+}
+
+function renderHeader() {
+  if (parentMode) {
+    document.getElementById('user-greeting').textContent = 'PARENT VIEW';
+    document.getElementById('user-menu').querySelectorAll('.user-btn').forEach(function (b) {
+      b.classList.add('hidden');
+    });
+    document.getElementById('parent-banner').classList.remove('hidden');
+    document.getElementById('parent-banner-name').textContent = parentScoutName;
+  } else {
+    document.getElementById('user-greeting').textContent = 'HI, ' + (session.user ? session.user.displayName.toUpperCase() : '');
+    var btns = document.getElementById('user-menu').querySelectorAll('.user-btn');
+    for (var i = 0; i < btns.length; i++) btns[i].classList.remove('hidden');
+    document.getElementById('parent-banner').classList.add('hidden');
+  }
+}
+
+function renderApp() {
+  renderHeader();
+  renderProgress();
+  renderRankTab();
+  renderCategoryTab();
+  renderMeritTab();
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(tab) {
+  currentTab = tab;
+  var tabs = document.querySelectorAll('.tabs .tab');
+  for (var i = 0; i < tabs.length; i++) {
+    if (tabs[i].getAttribute('data-tab') === tab) tabs[i].classList.add('active');
+    else tabs[i].classList.remove('active');
+  }
+  var ids = ['rank', 'category', 'merit'];
+  for (var j = 0; j < ids.length; j++) {
+    var el = document.getElementById('tab-' + ids[j]);
+    if (ids[j] === tab) el.classList.remove('hidden');
+    else el.classList.add('hidden');
+  }
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+document.addEventListener('DOMContentLoaded', function () {
+  // Auth tabs
+  var authTabs = document.querySelectorAll('.auth-tab');
+  for (var i = 0; i < authTabs.length; i++) {
+    (function (t) {
+      t.addEventListener('click', function () {
+        setAuthMode(t.getAttribute('data-mode'));
+      });
+    })(authTabs[i]);
+  }
+
+  document.getElementById('login-form').addEventListener('submit', handleLogin);
+  document.getElementById('signup-form').addEventListener('submit', handleSignup);
+  document.getElementById('parent-mode-btn').addEventListener('click', openParentModal);
+
+  document.getElementById('logout-btn').addEventListener('click', handleLogout);
+  document.getElementById('share-btn').addEventListener('click', openShareModal);
+  document.getElementById('changepw-btn').addEventListener('click', openChangePasswordModal);
+  document.getElementById('exit-parent-btn').addEventListener('click', exitParentMode);
+
+  // Main tabs
+  var mainTabs = document.querySelectorAll('.tabs .tab');
+  for (var k = 0; k < mainTabs.length; k++) {
+    (function (t) {
+      t.addEventListener('click', function () {
+        switchTab(t.getAttribute('data-tab'));
+      });
+    })(mainTabs[k]);
+  }
+
+  // Try to restore session
+  var savedToken = localStorage.getItem(TOKEN_KEY);
+  if (savedToken) {
+    session.token = savedToken;
+    showLoading();
+    api('getProgress', { token: savedToken })
+      .then(function (res) {
+        if (!res.ok) {
+          localStorage.removeItem(TOKEN_KEY);
+          session.token = null;
+          showAuth();
+          return;
+        }
+        // We need user info — call getShareCode to fetch displayName & shareCode
+        api('getShareCode', { token: savedToken }).then(function (sc) {
+          if (sc.ok) {
+            session.user = { email: '', displayName: sc.displayName, shareCode: sc.shareCode };
+          } else {
+            session.user = { displayName: 'Scout', shareCode: '' };
+          }
+          state.progress = res.progress || {};
+          parentMode = false;
+          renderApp();
+          showApp();
+        });
+      })
+      .catch(function () {
+        showAuth();
+      });
+  } else {
+    showAuth();
+  }
+});
+</script>
+</body>
+</html>
